@@ -1,0 +1,62 @@
+import collections
+from nltk.tokenize import word_tokenize
+from random import choice
+import nltk
+nltk.download('punkt')
+
+# Define a function to perform stemming (optional)
+# You can install the nltk.corpus package for stemming functionality
+# from nltk.stem import PorterStemmer
+
+# def stem_tokens(tokens):
+#   stemmer = PorterStemmer()
+#   stemmed_tokens = [stemmer.stem(item) for item in tokens]
+#   return stemmed_tokens
+
+# Define a defaultdict to store intents and responses
+intents = collections.defaultdict(list)
+
+# Define keywords and responses for greetings
+greetings_keywords = ["hi", "hello", "hey"]
+greetings_responses = [
+    "Hi there!  How can I help you today?",
+    "Hello!  What would you like to chat about?"
+]
+intents["greetings"] = greetings_keywords
+
+# Define more intents and responses (add more as needed)
+compliment_responses = [
+    "Thank you!  That's very kind of you.",
+    "I appreciate the compliment! "
+]
+intents["compliment"] = ["you look nice", "great job"]
+
+# Define a default response
+default_response = "Sorry, I didn't quite understand that.  Can you rephrase?"
+
+# Process user input
+def process_input(user_input):
+  # Ensure user_input is a string (avoid PyodideFuture issue)
+  if not isinstance(user_input, str):
+    return ""
+  tokens = word_tokenize(user_input.lower())
+  # Optionally uncomment the following line to perform stemming
+  # tokens = stem_tokens(tokens)
+  return tokens
+
+# Match intent and generate response
+def get_response(user_input):
+  tokens = process_input(user_input)
+  for intent, keywords in intents.items():
+    for keyword in keywords:
+      if keyword in tokens:
+        return choice(intents[intent])
+  return default_response
+
+# Run the chatbot
+while True:
+  user_input = input("You: ")
+  response = get_response(user_input)
+  print("Chatbot:", response)
+  if user_input == "bye":
+    break
